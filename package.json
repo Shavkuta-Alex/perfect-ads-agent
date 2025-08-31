@@ -1,4 +1,26 @@
 {
   "name": "langchain-ads-agent",
-  "packageManager": "yarn@4.6.0"
+  "type": "module",
+  "packageManager": "yarn@4.6.0",
+  "scripts": {
+    "start": "tsx src/app.ts"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.72",
+    "@langchain/langgraph": "^0.4.7",
+    "@langchain/ollama": "^0.2.3",
+    "@langchain/openai": "^0.6.9",
+    "bullmq": "^5.58.2",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.1",
+    "fs": "^0.0.1-security",
+    "langchain": "^0.3.31",
+    "p-limit": "^7.1.1",
+    "path": "^0.12.7",
+    "redis": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
 }
