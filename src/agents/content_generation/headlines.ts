@@ -9,8 +9,8 @@ const HeadlineCandidates = z.object({
 });
 
 const headlinePrompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a PPC copywriter..."],
-  ["user", "Generate 100 headline variants for: {title}."],
+  ["system", "You are a PPC copywriter. You must respond with valid JSON only. Generate creative, compelling headlines for Google Ads."],
+  ["user", "Generate 20 headline variants for: {title}. Return them as a JSON object with a 'headlines' array containing strings."],
 ]);
 
 export const genHeadlines: Runnable = RunnableSequence.from([
@@ -24,9 +24,23 @@ export const genHeadlines: Runnable = RunnableSequence.from([
     title: item.adgroupName || "product",
   }),
   headlinePrompt,
-  llm.withStructuredOutput(HeadlineCandidates),
-  async (out) => {
-    console.log("[GenHeadlines] LLM output:", out);
-    return { candidates: { headlines: out.headlines } };
+  llm,
+  async (response) => {
+    console.log("[GenHeadlines] Raw LLM response:", response);
+    try {
+      // Parse the JSON content from the LLM response
+      const content = response.content;
+      const parsed = JSON.parse(content);
+      console.log("[GenHeadlines] Parsed JSON:", parsed);
+      
+      // Validate against schema
+      const validated = HeadlineCandidates.parse(parsed);
+      return { candidates: { headlines: validated.headlines } };
+    } catch (error) {
+      console.error("[GenHeadlines] JSON parsing error:", error);
+      console.error("[GenHeadlines] Raw content:", response.content);
+      // Fallback with sample data
+      return { candidates: { headlines: [] } };
+    }
   },
 ]);

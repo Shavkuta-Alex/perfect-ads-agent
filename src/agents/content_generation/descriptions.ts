@@ -9,8 +9,8 @@ const DescriptionCandidates = z.object({
 });
 
 const descriptionPrompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a PPC copywriter..."],
-  ["user", "Generate 100 description variants for: {title}."],
+  ["system", "You are a PPC copywriter. You must respond with valid JSON only. Generate compelling ad descriptions for Google Ads."],
+  ["user", "Generate 20 description variants for: {title}. Return them as a JSON object with a 'descriptions' array containing strings."],
 ]);
 
 export const genDescriptions: Runnable = RunnableSequence.from([
@@ -24,9 +24,23 @@ export const genDescriptions: Runnable = RunnableSequence.from([
     title: item.adgroupName || "product",
   }),
   descriptionPrompt,
-  llm.withStructuredOutput(DescriptionCandidates),
-  async (out) => {
-    console.log("[GenDescriptions] LLM output:", out);
-    return { candidates: { descriptions: out.descriptions } };
+  llm,
+  async (response) => {
+    console.log("[GenDescriptions] Raw LLM response:", response);
+    try {
+      // Parse the JSON content from the LLM response
+      const content = response.content;
+      const parsed = JSON.parse(content);
+      console.log("[GenDescriptions] Parsed JSON:", parsed);
+      
+      // Validate against schema
+      const validated = DescriptionCandidates.parse(parsed);
+      return { candidates: { descriptions: validated.descriptions } };
+    } catch (error) {
+      console.error("[GenDescriptions] JSON parsing error:", error);
+      console.error("[GenDescriptions] Raw content:", response.content);
+      // Fallback with sample data
+      return { candidates: { descriptions: [] } };
+    }
   },
 ]);

@@ -19,7 +19,6 @@ export function buildMainGraph() {
     .addEdge(START, "removeDuplicates")
     .addEdge("removeDuplicates", "filterBlacklisted")
     .addConditionalEdges("filterBlacklisted", (state) => {
-      console.log("[MainGraph] Filtering blacklisted items:", state.preppedItems);
       return (state.preppedItems || []).map(
         (item) =>
           new Send("team", {
