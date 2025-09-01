@@ -1,0 +1,41 @@
+flowchart TD
+  %% === Stage 1: Preparation ===
+  subgraph S1[Stage 1 Preparation]
+    A[rawItems + blacklist]
+    B[removeDuplicates]
+    C[filterBlacklisted]
+    A --> B --> C
+  end
+
+  %% === Stage 2: Agent Teams (map) ===
+  subgraph S2[Stage 2 Processing map]
+    D[chooseTeams · map preppedItems → Send(team,{item})]
+    E[[team subgraph]]:::team
+    D -- fan-out --> E
+  end
+
+  %% === Stage 3: Refinement ===
+  subgraph S3[Stage 3 Refinement]
+    F[receiveTeam · merge teamTopK → teamResults]
+    G[completeAdGroup · build finalAdGroups]
+  end
+
+  C --> D
+  E --> F --> G
+
+  classDef team fill:#eef,stroke:#99f,color:#111;
+
+%% ----------------- Team Subgraph -----------------
+  subgraph T[Team Subgraph (per item)]
+    T0[item]
+    T1[genHeadlines]
+    T2[genDescriptions]
+    T3[genCallouts]
+    T4[rankHeadlines]
+    T5[rankDescriptions]
+    T6[rankCallouts]
+    T7[teamTopK (K per stream)]
+    T0 --> T1 --> T4 --> T7
+    T0 --> T2 --> T5 --> T7
+    T0 --> T3 --> T6 --> T7
+  end

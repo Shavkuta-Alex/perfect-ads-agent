@@ -3,7 +3,7 @@
   "type": "module",
   "packageManager": "yarn@4.6.0",
   "scripts": {
-    "start": "tsx src/app.ts"
+    "start": "tsx src/run.ts"
   },
   "dependencies": {
     "@langchain/core": "^0.3.72",
