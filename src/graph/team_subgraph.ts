@@ -20,24 +20,18 @@ export function buildTeamSubgraph() {
       };
     })
     .addNode("generate_headlines", async (state) => {
-      console.log("[Generate Headlines] Starting...");
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay for visualization
+      console.log("[Generate Headlines] Starting for:", state.item.adgroupName);
       const result = await genHeadlines.invoke(state);
-      console.log("[Generate Headlines] Completed");
       return result;
     })
     .addNode("generate_descriptions", async (state) => {
-      console.log("[Generate Descriptions] Starting...");
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay for visualization
+      console.log("[Generate Descriptions] Starting for:", state.item.adgroupName);
       const result = await genDescriptions.invoke(state);
-      console.log("[Generate Descriptions] Completed");
       return result;
     })
     .addNode("generate_callouts", async (state) => {
-      console.log("[Generate Callouts] Starting...");
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay for visualization
+      console.log("[Generate Callouts] Starting for:", state.item.adgroupName);
       const result = await genCallouts.invoke(state);
-      console.log("[Generate Callouts] Completed");
       return result;
     })
     .addNode("rank_headlines", rankHeadlines)
