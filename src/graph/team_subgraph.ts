@@ -13,9 +13,33 @@ import { ItemState, type TopKCandidates } from "../types/state.js";
 
 export function buildTeamSubgraph() {
   const g = new StateGraph(ItemState)
-    .addNode("generate_headlines", genHeadlines)
-    .addNode("generate_descriptions", genDescriptions)
-    .addNode("generate_callouts", genCallouts)
+    .addNode("initialize_candidates", async ({ item }) => {
+      return {
+        candidates: { headlines: [], descriptions: [], callouts: [] },
+        item,
+      };
+    })
+    .addNode("generate_headlines", async (state) => {
+      console.log("[Generate Headlines] Starting...");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay for visualization
+      const result = await genHeadlines.invoke(state);
+      console.log("[Generate Headlines] Completed");
+      return result;
+    })
+    .addNode("generate_descriptions", async (state) => {
+      console.log("[Generate Descriptions] Starting...");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay for visualization
+      const result = await genDescriptions.invoke(state);
+      console.log("[Generate Descriptions] Completed");
+      return result;
+    })
+    .addNode("generate_callouts", async (state) => {
+      console.log("[Generate Callouts] Starting...");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay for visualization
+      const result = await genCallouts.invoke(state);
+      console.log("[Generate Callouts] Completed");
+      return result;
+    })
     .addNode("rank_headlines", rankHeadlines)
     .addNode("rank_descriptions", rankDescriptions)
     .addNode("rank_callouts", rankCallouts)
@@ -41,9 +65,10 @@ export function buildTeamSubgraph() {
         events: [`team done: ${item.adgroupName}`],
       };
     })
-    .addEdge(START, "generate_headlines")
-    .addEdge(START, "generate_descriptions")
-    .addEdge(START, "generate_callouts")
+    .addEdge(START, "initialize_candidates")
+    .addEdge("initialize_candidates", "generate_headlines")
+    .addEdge("initialize_candidates", "generate_descriptions")
+    .addEdge("initialize_candidates", "generate_callouts")
     .addEdge("generate_headlines", "rank_headlines")
     .addEdge("generate_descriptions", "rank_descriptions")
     .addEdge("generate_callouts", "rank_callouts")

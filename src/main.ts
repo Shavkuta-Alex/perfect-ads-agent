@@ -9,11 +9,7 @@ const teamSubgraph = buildTeamSubgraph();
 
 const generateContent = (state: typeof OverallState.State) => {
   return state.preppedItems.map(
-    (item, index) =>
-      new Send("contentGenerationTeam", {
-        item,
-        candidates: { headlines: [], descriptions: [], callouts: [] },
-      }))
+    (item) => new Send("contentGenerationTeam", { item }))
 }
 
 const g = new StateGraph(OverallState)
