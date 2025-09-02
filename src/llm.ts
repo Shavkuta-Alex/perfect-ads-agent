@@ -13,7 +13,7 @@ const openai = new ChatOpenAI({
 const ollama = new ChatOllama({
     model: "llama3.2",
     temperature: 0,
-    maxConcurrency: 10,  // Reduce concurrency to avoid overwhelming Ollama
+    maxConcurrency: 20,  // Reduce concurrency to avoid overwhelming Ollama
     maxRetries: 3,
     format: "json",
 });

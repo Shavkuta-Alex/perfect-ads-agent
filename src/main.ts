@@ -1,30 +1,34 @@
 // graph/main.ts
 import { END, Send, START, StateGraph } from "@langchain/langgraph";
 import { filterBlacklisted, removeDuplicates } from "./graph/stage_1.js";
-import { completeAdGroup } from "./graph/stage_3.js";
+import { composeFinalAdGroups } from "./graph/stage_3.js";
 import { buildTeamSubgraph } from "./graph/team_subgraph.js";
 import { OverallState } from "./types/state.js";
 
 const teamSubgraph = buildTeamSubgraph();
 
-const g = new StateGraph(OverallState)
-.addNode("removeDuplicates", removeDuplicates)
-.addNode("filterBlacklisted", filterBlacklisted)
-.addNode("team", teamSubgraph)
-.addNode("complete", completeAdGroup)
-
-.addEdge(START, "removeDuplicates")
-.addEdge("removeDuplicates", "filterBlacklisted")
-.addConditionalEdges("filterBlacklisted", (state) => {
-  return (state.preppedItems || []).map(
-    (item) =>
-      new Send("team", {
+const generateContent = (state: typeof OverallState.State) => {
+  return state.preppedItems.map(
+    (item, index) =>
+      new Send("contentGenerationTeam", {
         item,
         candidates: { headlines: [], descriptions: [], callouts: [] },
-      })
-  );
-})
-.addEdge("team", "complete")
-.addEdge("complete", END);
+      }))
+}
+
+const g = new StateGraph(OverallState)
+  .addNode("removeDuplicates", removeDuplicates)
+  .addNode("filterBlacklisted", filterBlacklisted)
+  .addNode("contentGenerationTeam", teamSubgraph)
+  .addNode("composeFinalAdGroups", composeFinalAdGroups)
+
+  .addEdge(START, "removeDuplicates")
+  .addEdge("removeDuplicates", "filterBlacklisted")
+  .addConditionalEdges("filterBlacklisted", (state) => {
+    // This would create a single path instead of parallel paths
+    return state.preppedItems.length > 0 ? generateContent(state) : "composeFinalAdGroups";
+  })
+  .addEdge("contentGenerationTeam", "composeFinalAdGroups")
+  .addEdge("composeFinalAdGroups", END);
 
 export const graph = g.compile();

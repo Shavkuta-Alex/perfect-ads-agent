@@ -13,5 +13,5 @@ const startTime = Date.now();
 const result = await graph.invoke(inputData);
 
 console.log(`Execution completed in ${Date.now() - startTime} seconds`); 
-console.log(result);
+console.log(JSON.stringify(result, null, 2));
   

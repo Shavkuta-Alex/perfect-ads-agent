@@ -1,6 +1,6 @@
 import { OverallState } from "../types/state.js";
 
-export const completeAdGroup = async (state: typeof OverallState.State) => {
+export const composeFinalAdGroups = async (state: typeof OverallState.State) => {
   console.log("[Stage 3] Completing ad group...");
   
   const finals = Object.values(state.teamResults || {}).map((item) => ({

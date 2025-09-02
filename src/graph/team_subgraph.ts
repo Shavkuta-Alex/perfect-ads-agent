@@ -13,13 +13,13 @@ import { ItemState, type TopKCandidates } from "../types/state.js";
 
 export function buildTeamSubgraph() {
   const g = new StateGraph(ItemState)
-    .addNode("genHeadlines", genHeadlines)
-    .addNode("genDescriptions", genDescriptions)
-    .addNode("genCallouts", genCallouts)
-    .addNode("rankHeadlines", rankHeadlines)
-    .addNode("rankDescriptions", rankDescriptions)
-    .addNode("rankCallouts", rankCallouts)
-    .addNode("teamTopK", async ({ item, candidates }) => {
+    .addNode("generate_headlines", genHeadlines)
+    .addNode("generate_descriptions", genDescriptions)
+    .addNode("generate_callouts", genCallouts)
+    .addNode("rank_headlines", rankHeadlines)
+    .addNode("rank_descriptions", rankDescriptions)
+    .addNode("rank_callouts", rankCallouts)
+    .addNode("select_top_k", async ({ item, candidates }) => {
       console.log("[TeamTopK] Generating top K candidates...");
       console.log("[TeamTopK] Candidates:", candidates);
       const topK: TopKCandidates = {
@@ -41,14 +41,14 @@ export function buildTeamSubgraph() {
         events: [`team done: ${item.adgroupName}`],
       };
     })
-    .addEdge(START, "genHeadlines")
-    .addEdge(START, "genDescriptions")
-    .addEdge(START, "genCallouts")
-    .addEdge("genHeadlines", "rankHeadlines")
-    .addEdge("genDescriptions", "rankDescriptions")
-    .addEdge("genCallouts", "rankCallouts")
-    .addEdge(["rankHeadlines", "rankDescriptions", "rankCallouts"], "teamTopK")
-    .addEdge("teamTopK", END);
+    .addEdge(START, "generate_headlines")
+    .addEdge(START, "generate_descriptions")
+    .addEdge(START, "generate_callouts")
+    .addEdge("generate_headlines", "rank_headlines")
+    .addEdge("generate_descriptions", "rank_descriptions")
+    .addEdge("generate_callouts", "rank_callouts")
+    .addEdge(["rank_headlines", "rank_descriptions", "rank_callouts"], "select_top_k")
+    .addEdge("select_top_k", END);
 
   return g.compile();
 }

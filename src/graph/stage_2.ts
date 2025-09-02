@@ -3,10 +3,6 @@ import type { ItemState } from "../types/state.js";
 export const receiveTeamResult = async (
   state: typeof ItemState.State
 ) => {
-  console.log("receiveTeamResult received state keys:", Object.keys(state));
-  console.log("receiveTeamResult item:", state.item);
-  console.log("receiveTeamResult topK:", state.topK);
-  
   const { item, topK } = state;
   
   if (!item?.adgroupName) {

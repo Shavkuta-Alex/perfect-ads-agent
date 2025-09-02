@@ -12,9 +12,9 @@ export const reducers = {
   },
   candidates: {
     reducer: (a: Candidates = { headlines: [], descriptions: [], callouts: [] }, b: Candidates = { headlines: [], descriptions: [], callouts: [] }) => ({
-      headlines: a.headlines.concat(b.headlines),
-      descriptions: a.descriptions.concat(b.descriptions),
-      callouts: a.callouts.concat(b.callouts),
+      headlines: (b.headlines && b.headlines.length > 0) ? b.headlines : a.headlines,
+      descriptions: (b.descriptions && b.descriptions.length > 0) ? b.descriptions : a.descriptions,
+      callouts: (b.callouts && b.callouts.length > 0) ? b.callouts : a.callouts,
     }),
   },
 };
