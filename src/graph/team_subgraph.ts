@@ -1,4 +1,4 @@
-import { START, StateGraph } from "@langchain/langgraph";
+import { END, START, StateGraph } from "@langchain/langgraph";
 import {
   genCallouts,
   genDescriptions,
@@ -20,12 +20,26 @@ export function buildTeamSubgraph() {
     .addNode("rankDescriptions", rankDescriptions)
     .addNode("rankCallouts", rankCallouts)
     .addNode("teamTopK", async ({ item, candidates }) => {
+      console.log("[TeamTopK] Generating top K candidates...");
+      console.log("[TeamTopK] Candidates:", candidates);
       const topK: TopKCandidates = {
         headlines: candidates.headlines.slice(0, 5),
         descriptions: candidates.descriptions.slice(0, 5),
         callouts: candidates.callouts.slice(0, 5),
       };
-      return { topK, item };
+      
+      // Return data that will be merged into the parent state
+      return { 
+        topK, 
+        item,
+        teamResults: {
+          [item.adgroupName]: { 
+            adgroupName: item.adgroupName,
+            topK,
+          },
+        },
+        events: [`team done: ${item.adgroupName}`],
+      };
     })
     .addEdge(START, "genHeadlines")
     .addEdge(START, "genDescriptions")
@@ -33,7 +47,8 @@ export function buildTeamSubgraph() {
     .addEdge("genHeadlines", "rankHeadlines")
     .addEdge("genDescriptions", "rankDescriptions")
     .addEdge("genCallouts", "rankCallouts")
-    .addEdge(["rankHeadlines", "rankDescriptions", "rankCallouts"], "teamTopK");
+    .addEdge(["rankHeadlines", "rankDescriptions", "rankCallouts"], "teamTopK")
+    .addEdge("teamTopK", END);
 
   return g.compile();
 }

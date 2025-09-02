@@ -1,42 +1,30 @@
 // Simple rankers: score by rules / another LLM call
-import { Runnable } from "@langchain/core/runnables";
+import type { ItemState } from "../types/state.js";
 
-const scoreWithHeuristicsOrLLM = async (candidates: string[]) => {
-    return candidates.map((candidate) => ({ text: candidate, score: Math.random() }));
+const scoreWithHeuristicsOrLLM = async (candidates: string[]): Promise<Array<{ text: string; score: number }>> => {
+    return candidates.map((candidate) => ({ text: candidate, score: Math.random() })).filter((a) => Boolean(a.text));
 };
 
-type HeadlineCandidates = {
-    headlines: string[];
-}
-
-export const rankHeadlines: Runnable<HeadlineCandidates> = async ({ candidates }: { candidates: HeadlineCandidates }) => {
+export const rankHeadlines = async (state: typeof ItemState.State) => {
     console.log("[RankHeadlines] Scoring headlines...");
-    const scored = await scoreWithHeuristicsOrLLM(candidates.headlines);
+    const scored = await scoreWithHeuristicsOrLLM(state.candidates.headlines);
     return {
-      candidates: { headlines: scored.sort((a, b) => b.score - a.score) },
+      candidates: { headlines: scored.sort((a, b) => b.score - a.score).map((a) => a.text) },
     };
 };
 
-type DescriptionCandidates = {
-    descriptions: string[];
-}
-
-export const rankDescriptions: Runnable = async ({ candidates }: { candidates: DescriptionCandidates }) => {
+export const rankDescriptions = async (state: typeof ItemState.State) => {
     console.log("[RankDescriptions] Scoring descriptions...");
-    const scored = await scoreWithHeuristicsOrLLM(candidates.descriptions);
+    const scored = await scoreWithHeuristicsOrLLM(state.candidates.descriptions);
     return {
-        candidates: { descriptions: scored.sort((a, b) => b.score - a.score) },
+        candidates: { descriptions: scored.sort((a, b) => b.score - a.score).map((a) => a.text) },
     };
 };
 
-type CalloutCandidates = {
-    callouts: string[];
-}
-
-export const rankCallouts: Runnable = async ({ candidates }: { candidates: CalloutCandidates }) => {
+export const rankCallouts = async (state: typeof ItemState.State) => {
     console.log("[RankCallouts] Scoring callouts...");
-    const scored = await scoreWithHeuristicsOrLLM(candidates.callouts);
+    const scored = await scoreWithHeuristicsOrLLM(state.candidates.callouts);
     return {
-        candidates: { callouts: scored.sort((a, b) => b.score - a.score) },
+        candidates: { callouts: scored.sort((a, b) => b.score - a.score).map((a) => a.text) },
     };
 };

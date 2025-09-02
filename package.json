@@ -3,7 +3,8 @@
   "type": "module",
   "packageManager": "yarn@4.6.0",
   "scripts": {
-    "start": "tsx src/run.ts"
+    "start": "npx tsx src/run.ts",
+    "studio": "npx @langchain/langgraph-cli dev"
   },
   "dependencies": {
     "@langchain/core": "^0.3.72",

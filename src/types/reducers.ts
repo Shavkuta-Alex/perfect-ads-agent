@@ -1,15 +1,17 @@
+import type { Candidates, FinalAdGroup, TeamOutput } from "./state.js";
+
 export const reducers = {
   teamResults: {
-    reducer: (a = {}, b = {}) => ({ ...a, ...b }),
+    reducer: (a: Record<string, TeamOutput> = {}, b: Record<string, TeamOutput> = {}) => ({ ...a, ...b }),
   },
   finalAdGroups: {
-    reducer: (a = [], b = []) => a.concat(b),
+    reducer: (a: FinalAdGroup[] = [], b: FinalAdGroup[] = []) => a.concat(b),
   },
   events: {
-    reducer: (a = [], b = []) => a.concat(b).slice(-5000),
+    reducer: (a: string[] = [], b: string[] = []) => a.concat(b).slice(-5000),
   },
   candidates: {
-    reducer: (a = { headlines: [], descriptions: [], callouts: [] }, b = { headlines: [], descriptions: [], callouts: [] }) => ({
+    reducer: (a: Candidates = { headlines: [], descriptions: [], callouts: [] }, b: Candidates = { headlines: [], descriptions: [], callouts: [] }) => ({
       headlines: a.headlines.concat(b.headlines),
       descriptions: a.descriptions.concat(b.descriptions),
       callouts: a.callouts.concat(b.callouts),

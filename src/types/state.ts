@@ -18,7 +18,7 @@ export type TeamOutput = {
   topK: TopKCandidates;
 };
 
-type FinalAdGroup = {
+export type FinalAdGroup = {
   adgroupName: string;
   headlines: string[];
   descriptions: string[];
@@ -42,4 +42,6 @@ export const ItemState = Annotation.Root({
   item: Annotation<Item>(),
   candidates: Annotation<Candidates>(reducers.candidates),
   topK: Annotation<TopKCandidates>(),
+  teamResults: Annotation<Record<string, TeamOutput>>(reducers.teamResults),
+  events: Annotation<string[]>(reducers.events),
 });
