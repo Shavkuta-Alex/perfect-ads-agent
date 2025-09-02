@@ -36,4 +36,6 @@ export const genDescriptions: Runnable = RunnableSequence.from([
       return { candidates: { descriptions: [] } };
     }
   },
-]);
+]).withConfig({
+  tags: ["generate_descriptions"],
+});

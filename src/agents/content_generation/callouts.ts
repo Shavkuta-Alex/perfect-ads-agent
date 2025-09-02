@@ -36,4 +36,6 @@ export const genCallouts: Runnable = RunnableSequence.from([
       return { candidates: { callouts: [] } };
     }
   },
-]);
+]).withConfig({
+  tags: ["generate_callouts"],
+});

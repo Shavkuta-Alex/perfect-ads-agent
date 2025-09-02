@@ -37,4 +37,6 @@ export const genHeadlines: Runnable = RunnableSequence.from([
       return { candidates: { headlines: [] } };
     }
   },
-]);
+]).withConfig({
+  tags: ["generate_headlines"],
+});
