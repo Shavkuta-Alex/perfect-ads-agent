@@ -22,7 +22,6 @@ const g = new StateGraph(OverallState)
   .addEdge("removeDuplicates", "filterBlacklisted")
   .addConditionalEdges("filterBlacklisted", (state) => {
     // This would create a single path instead of parallel paths
-    return state.preppedItems.length > 0 ? generateContent(state) : "composeFinalAdGroups";
   })
   .addEdge("contentGenerationTeam", "composeFinalAdGroups")
   .addEdge("composeFinalAdGroups", END);
